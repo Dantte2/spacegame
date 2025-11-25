@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://2cp7mkucw1cr"]
+
+[ext_resource type="Texture2D" uid="uid://c63sbder0ks8e" path="res://assets/player/laserout1-sheet.png" id="1_im30v"]
+[ext_resource type="Script" uid="uid://c2buk0yhxro50" path="res://scripts/enemy_laser.gd" id="1_iyr3e"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_iyr3e"]
+radius = 4.1231055
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x6ppl"]
+atlas = ExtResource("1_im30v")
+region = Rect2(0, 0, 11, 10)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3ht5"]
+atlas = ExtResource("1_im30v")
+region = Rect2(11, 0, 11, 10)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c1p5m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x6ppl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m3ht5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}]
+
+[node name="enemy_laser" type="Area2D"]
+collision_layer = 2
+script = ExtResource("1_iyr3e")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["enemy_bullet"]]
+shape = SubResource("CircleShape2D_iyr3e")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_c1p5m")
+frame = 1
+frame_progress = 0.23196274

@@ -1,0 +1,71 @@
+[gd_scene load_steps=11 format=3 uid="uid://divjny82w8yty"]
+
+[ext_resource type="Texture2D" uid="uid://b58hev8pnv57d" path="res://assets/enemy/explosion-sheet.png" id="1_1ltxp"]
+[ext_resource type="Script" uid="uid://dm1q4hwykxssa" path="res://scripts/death_explosion.gd" id="1_pq7px"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pq7px"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(0, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g20er"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(400, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pc8eb"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(800, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vii10"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(1200, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_appi7"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(1600, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gj7x4"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(2000, 0, 400, 300)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2d1x7"]
+atlas = ExtResource("1_1ltxp")
+region = Rect2(2400, 0, 400, 300)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_p8vn1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pq7px")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g20er")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pc8eb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vii10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_appi7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gj7x4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2d1x7")
+}],
+"loop": false,
+"name": &"default",
+"speed": 20.0
+}]
+
+[node name="death_explosion" type="Node2D"]
+script = ExtResource("1_pq7px")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_p8vn1")
+autoplay = "default"
+frame = 6
+frame_progress = 1.0
+speed_scale = 0.5

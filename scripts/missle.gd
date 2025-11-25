@@ -1,0 +1,111 @@
+extends CharacterBody2D
+
+# --- Missile Properties ---
+@export var lifetime: float = 5.0
+@export var drop_time: float = 0.2
+@export var drop_speed: float = 850.0
+@export var initial_speed: float = 2000.0
+@export var homing_speed: float = 2000.0
+@export var homing_turn_speed: float = 3.0  # radians/sec
+@export var direction_multiplier: int = 1  # 1 = drop, -1 = rise
+@export var explosion_scene: PackedScene  # Explosion scene
+@export var trail_delay: float = 0.0001  # delay before trail appears
+
+enum MissileState { DROPPING, FORWARD }
+var state: MissileState = MissileState.DROPPING
+var state_timer: float = 0.0
+
+# --- References ---
+@onready var exhaust: AnimatedSprite2D = $Exhaust
+@onready var trail: Node = $Trail2D
+
+# --- Homing target ---
+var target: Node2D = null
+
+# Timer for trail appearance
+var trail_timer: Timer
+
+# --- Set target externally ---
+func set_target(enemy: Node2D) -> void:
+    target = enemy
+
+func _ready():
+    if exhaust:
+        exhaust.visible = false
+    if trail:
+        trail.visible = false
+        trail.set_physics_process(false)
+
+    # Create a one-shot timer for trail
+    trail_timer = Timer.new()
+    trail_timer.wait_time = trail_delay
+    trail_timer.one_shot = true
+    trail_timer.connect("timeout", Callable(self, "_on_trail_timer_timeout"))
+    add_child(trail_timer)
+
+    destroy_after_lifetime()
+
+# --- Trail timer callback ---
+func _on_trail_timer_timeout():
+    if trail:
+        trail.clear_points()  # Prevent snapping
+        trail.global_position = global_position
+        trail.visible = true
+        trail.set_physics_process(true)
+
+# --- Lifetime destruction ---
+func destroy_after_lifetime() -> void:
+    await get_tree().create_timer(lifetime).timeout
+    explode()
+
+func _physics_process(delta):
+    state_timer += delta
+
+    match state:
+        MissileState.DROPPING:
+            # Drop phase
+            position.y += drop_speed * delta * direction_multiplier
+            if state_timer >= drop_time:
+                state = MissileState.FORWARD
+                state_timer = 0.0
+                if exhaust:
+                    exhaust.visible = true
+                    exhaust.play("exhaust")
+                # Start trail timer instead of enabling immediately
+                if trail_timer:
+                    trail_timer.start()
+
+        MissileState.FORWARD:
+            # Smooth homing
+            var velocity_dir = Vector2(initial_speed, 0).rotated(rotation)
+            if target and target.is_inside_tree():
+                var to_target = (target.global_position - global_position).normalized()
+                var desired_angle = to_target.angle()
+                var max_turn = homing_turn_speed * delta
+                rotation += clamp(desired_angle - rotation, -max_turn, max_turn)
+                velocity_dir = Vector2(initial_speed, 0).rotated(rotation)
+
+            # Move missile
+            var collision = move_and_collide(velocity_dir * delta)
+            if collision:
+                var hit = collision.get_collider()
+                if hit and hit.is_in_group("enemy"):
+                    explode()
+                    if hit.has_method("take_damage"):
+                        hit.take_damage(10)  # adjust damage if needed
+
+    # --- Exhaust shader update ---
+    if exhaust and exhaust.visible:
+        var shader_material = exhaust.material
+        if shader_material:
+            shader_material.set("shader_parameter/glow_strength", 2.0)
+            shader_material.set("shader_parameter/pulse_amount", 0.3)
+            shader_material.set("shader_parameter/time", Time.get_ticks_msec() / 1000.0)
+
+# --- Explosion function ---
+func explode():
+    if explosion_scene:
+        var explosion = explosion_scene.instantiate()
+        explosion.global_position = global_position
+        get_tree().current_scene.add_child(explosion)
+    queue_free()
