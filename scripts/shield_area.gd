@@ -3,7 +3,6 @@ extends Area2D
 @onready var shield_sprite: Sprite2D = $ShieldSprite
 
 func _ready():
-    # Make sure the Area2D can detect other areas
     monitoring = true
     connect("area_entered", Callable(self, "_on_area_entered"))
     print("Shield ready, Layer:", collision_layer, "Mask:", collision_mask)
@@ -23,6 +22,11 @@ func _on_area_entered(area: Area2D) -> void:
             shield_sprite.material.set("shader_parameter/hit_uv", uv)
             shield_sprite.material.set("shader_parameter/hit_strength", 1.0)
             shield_sprite.material.set("shader_parameter/hit_radius", 0.1) # optional radius
+        
+        # Notify Player to apply shield damage
+        var player = get_parent()
+        if player.has_method("apply_shield_damage"):
+            player.apply_shield_damage(10, area.global_position)
         
         # Remove bullet
         area.queue_free()

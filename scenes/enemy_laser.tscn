@@ -28,7 +28,7 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="enemy_laser" type="Area2D"]
+[node name="enemy_laser" type="Area2D" groups=["enemy_bullet"]]
 collision_layer = 2
 script = ExtResource("1_iyr3e")
 

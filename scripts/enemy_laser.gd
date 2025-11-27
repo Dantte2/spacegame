@@ -1,24 +1,42 @@
 extends Area2D
 
 @export var speed: float = 600.0
-var velocity: Vector2 = Vector2(-600, 0)
+@export var damage_to_shield: int = 50
+@export var damage_to_health: int = 10
 
 func _ready():
+    collision_layer = 2       # bullet
+    collision_mask = 1        # can hit player
+    monitoring = true
     monitorable = true
-    collision_layer = 2       # enemy bullet layer
-    collision_mask = 1        # hit player/shield
-    add_to_group("enemy_bullet")
 
 func _physics_process(delta):
-    position += velocity * delta
+    position += Vector2(-speed, 0) * delta
 
-    if position.x < -100 or position.x > 2000:
-        queue_free()
+    # Check overlaps manually — this ALWAYS works in Godot 4
+    var areas = get_overlapping_areas()
+    for a in areas:
+        _handle_hit(a)
+        return
 
-func _on_body_entered(body):
-    if body.is_in_group("player"):
-        # --- Apply shield damage correctly ---
-        if body.has_method("apply_shield_damage"):
-            body.apply_shield_damage(10, global_position)  
-            #            damage ↑       hit position ↑
-        queue_free()
+    var bodies = get_overlapping_bodies()
+    for b in bodies:
+        _handle_hit(b)
+        return
+
+func _handle_hit(target):
+    # Find the player node (the one with the health/shield script)
+    var player = target
+    while player and not player.has_method("take_damage"):
+        player = player.get_parent()
+
+    if player == null:
+        return  # Not the player
+
+    # Shield logic
+    if player.shield > 0:
+        player.apply_shield_damage(damage_to_shield, global_position)
+    else:
+        player.take_damage(damage_to_health)
+
+    queue_free()

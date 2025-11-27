@@ -7,10 +7,12 @@ uniform float time;
 void fragment() {
     vec4 tex = texture(TEXTURE, UV);
 
+    // Pulse multiplier
     float pulse = 1.0 + pulse_amount * sin(time * 10.0);
 
     // Glow
     vec3 boosted = tex.rgb * (1.0 + glow_strength * pulse);
+
     float max_channel = max(max(boosted.r, boosted.g), boosted.b);
     if (max_channel > 0.0) {
         boosted *= tex.rgb / max_channel;

@@ -39,6 +39,10 @@ offset_right = 140.0
 offset_bottom = 176.0
 text = "respawn enemy"
 
+[node name="Button" type="Button" parent="debugcanvas"]
+offset_right = 8.0
+offset_bottom = 8.0
+
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 visible = false
 
@@ -121,3 +125,5 @@ texture_under = SubResource("AtlasTexture_05sef")
 texture_progress = SubResource("AtlasTexture_vf3rk")
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
+
+[editable path="player"]

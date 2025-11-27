@@ -33,6 +33,7 @@ var can_use_super := true
 @export var max_shield: float = 100.0
 var shield: float = max_shield
 var shieldbar: TextureProgressBar
+@onready var shield_sprite: Sprite2D = $ShieldArea/ShieldSprite
 
 func _ready():
     # Initialize shield bar safely in any scene
@@ -52,7 +53,7 @@ func _init_ui():
     shieldbar.max_value = max_shield
     shieldbar.value = shield
 
-func _physics_process(delta):
+func _physics_process(_delta):
     var input_vector = Vector2.ZERO
 
     # --- Player input ---
@@ -68,8 +69,8 @@ func _physics_process(delta):
     if input_vector.length() > 0:
         input_vector = input_vector.normalized() * speed
 
-    # Optional automatic forward movement
-    # input_vector.x += auto_speed
+    #Optional automatic forward movement
+    #input_vector.x += auto_speed
 
     velocity = input_vector
     move_and_slide()
@@ -123,21 +124,52 @@ func _physics_process(delta):
         can_use_super = true
 
 # ============================================================
-#                  Shield System
+#                  Shield System (updated)
 # ============================================================
 func apply_shield_damage(amount: float, hit_pos: Vector2):
-    shield -= amount
-    shield = max(shield, 0)
-    update_shieldbar()
-    show_shield_hit(hit_pos)
+    if shield > 0:
+        # Subtract shield
+        shield -= amount
+        shield = max(shield, 0)
+        update_shieldbar()
+
+        # Show hit glow on shield shader
+        show_shield_hit(hit_pos)
+
+        # --- Shield break handling ---
+        if shield <= 0:
+            print("Shield broken!")
+
+            var shield_sprite = $ShieldArea/ShieldSprite
+
+            # Disable collision
+            $ShieldArea.set_deferred("collision_layer", 0)
+            $ShieldArea.set_deferred("collision_mask", 0)
+            $ShieldArea.set_deferred("monitoring", true)
+
+            if shield_sprite and shield_sprite.material:
+                # Make sprite visible for fragment animation
+                shield_sprite.show()
+
+                var mat = shield_sprite.material
+                mat.set_shader_parameter("break_strength", 0.0)
+                mat.set_shader_parameter("time", Time.get_ticks_msec() / 1000.0)
+
+                # Animate break_strength from 0 -> 1 over 0.5 seconds
+                var tween = create_tween()
+                tween.tween_property(mat, "shader_parameter/break_strength", 1.0, 0.5)
+                tween.tween_callback(Callable(shield_sprite, "hide"))  # hide sprite after animation
+    else:
+        # Shield gone, damage player health
+        take_damage(amount)
 
 func update_shieldbar():
     if shieldbar:
         shieldbar.value = shield
 
 func show_shield_hit(hit_global_pos: Vector2):
-    var shield_node = $Shield
-    if shield_node.material:
+    var shield_node = $ShieldArea/ShieldSprite
+    if shield_node and shield_node.material:
         var local = shield_node.to_local(hit_global_pos)
         var uv = (local / shield_node.texture.get_size()) + Vector2(0.5, 0.5)
         shield_node.material.set("shader_parameter/hit_uv", uv)
@@ -145,6 +177,21 @@ func show_shield_hit(hit_global_pos: Vector2):
 
         var tween = create_tween()
         tween.tween_property(shield_node.material, "shader_parameter/hit_strength", 0.0, 0.3)
+
+# ============================================================
+#                  Health system
+# ============================================================
+var health: int = 100  # add this if not already present
+
+func take_damage(amount: int):
+    health -= amount
+    print("Player health:", health)
+    if health <= 0:
+        die()
+
+func die():
+    print("Player died")
+    queue_free()
 
 # ============================================================
 #                  Shooting Functions

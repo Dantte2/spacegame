@@ -108,17 +108,20 @@ animations = [{
 shader = ExtResource("11_d2wvv")
 shader_parameter/shield_length = 0.25
 shader_parameter/shield_radius = 0.25
-shader_parameter/shield_color = Vector4(0.2, 0.6, 1, 0.5)
 shader_parameter/hit_uv = Vector2(-1, -1)
 shader_parameter/hit_strength = 0.0
 shader_parameter/hit_glow_radius = 0.1
 shader_parameter/hit_color = Vector4(0, 0.6, 1, 1)
+shader_parameter/break_strength = 0.0
+shader_parameter/fragment_size = 0.02
+shader_parameter/fragment_color = Vector4(0.5, 0.8, 1, 1)
+shader_parameter/time = 0.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_jej6c"]
 radius = 94.0
 height = 292.0
 
-[node name="player" type="CharacterBody2D" groups=["player"]]
+[node name="player" type="CharacterBody2D" groups=["player_body"]]
 z_index = -10
 scale = Vector2(0.5, 0.5)
 collision_mask = 2
@@ -129,13 +132,12 @@ missile_scene = ExtResource("4_fjrip")
 super_scene = ExtResource("5_smehm")
 tracer_scene = ExtResource("6_ur7pv")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player_body"]]
 z_index = -1
 sprite_frames = SubResource("SpriteFrames_ur7pv")
 animation = &"down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 position = Vector2(-4, 0)
 rotation = 1.5708
 shape = SubResource("CapsuleShape2D_dqkch")
@@ -147,14 +149,15 @@ position = Vector2(-165, 2)
 sprite_frames = SubResource("SpriteFrames_d2wvv")
 animation = &"normal"
 
-[node name="GunPoint" type="Node2D" parent="." groups=["player"]]
+[node name="GunPoint" type="Node2D" parent="." groups=["player_body"]]
 z_index = 10
 position = Vector2(50.9, 6)
 
 [node name="MissilePoint" type="Node2D" parent="."]
 position = Vector2(-17, 7)
 
-[node name="ShieldArea" type="Area2D" parent="."]
+[node name="ShieldArea" type="Area2D" parent="." groups=["player_shield"]]
+collision_layer = 2
 collision_mask = 2
 script = ExtResource("12_3v2ag")
 
