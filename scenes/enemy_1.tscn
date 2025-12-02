@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bg0nh4fulwty8"]
+[gd_scene load_steps=7 format=3 uid="uid://bg0nh4fulwty8"]
 
 [ext_resource type="Script" uid="uid://04xavylk7xt8" path="res://scripts/enemy_1.gd" id="1_a1412"]
 [ext_resource type="Texture2D" uid="uid://hhf52teuvkoy" path="res://assets/enemy/enemy-z.png" id="1_tcmaw"]
 [ext_resource type="PackedScene" uid="uid://divjny82w8yty" path="res://scenes/death_explosion.tscn" id="2_ejytf"]
 [ext_resource type="PackedScene" uid="uid://2cp7mkucw1cr" path="res://scenes/enemy_laser.tscn" id="3_dq62l"]
+[ext_resource type="PackedScene" uid="uid://bc7qxoit7c3p1" path="res://scenes/ghost.tscn" id="4_d3026"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a1412"]
 radius = 28.0
@@ -13,9 +14,12 @@ collision_layer = 2
 script = ExtResource("1_a1412")
 death_animation_scene = ExtResource("2_ejytf")
 laser_scene = ExtResource("3_dq62l")
+ghost_scene = ExtResource("4_d3026")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_tcmaw")
+flip_h = true
+flip_v = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["enemy"]]
 shape = SubResource("CircleShape2D_a1412")

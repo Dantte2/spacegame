@@ -1,39 +1,41 @@
 extends Area2D
 
 @export var speed: float = 600.0
-@export var damage_to_shield: int = 50
-@export var damage_to_health: int = 10
+@export var damage_to_shield: int = 1
+@export var damage_to_health: int = 1
+
+var velocity: Vector2 = Vector2.ZERO
+
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready():
-    collision_layer = 2       # bullet
-    collision_mask = 1        # can hit player
-    monitoring = true
-    monitorable = true
+    if sprite:
+        sprite.play()
+
+    # Collision layers
+    collision_layer = 2  # bullet
+    collision_mask = 1   # collides with player only
+
+    connect("area_entered", Callable(self, "_on_area_entered"))
+    connect("body_entered", Callable(self, "_on_body_entered"))
 
 func _physics_process(delta):
-    position += Vector2(-speed, 0) * delta
+    position += velocity * delta
 
-    # Check overlaps manually — this ALWAYS works in Godot 4
-    var areas = get_overlapping_areas()
-    for a in areas:
-        _handle_hit(a)
-        return
+func _on_area_entered(area):
+    _handle_hit(area)
 
-    var bodies = get_overlapping_bodies()
-    for b in bodies:
-        _handle_hit(b)
-        return
+func _on_body_entered(body):
+    _handle_hit(body)
 
 func _handle_hit(target):
-    # Find the player node (the one with the health/shield script)
+    # find player script in parent chain
     var player = target
     while player and not player.has_method("take_damage"):
         player = player.get_parent()
+    if not player:
+        return
 
-    if player == null:
-        return  # Not the player
-
-    # Shield logic
     if player.shield > 0:
         player.apply_shield_damage(damage_to_shield, global_position)
     else:

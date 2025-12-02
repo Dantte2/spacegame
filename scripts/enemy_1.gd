@@ -1,54 +1,215 @@
-extends CharacterBody2D  
+extends CharacterBody2D
 
-@export var health: int = 10
-@export var death_animation_scene: PackedScene  
+enum State { IDLE, REPOSITION, ATTACK }
+var state: State = State.IDLE
+
+# -----------------------------
+# Enemy stats
+# -----------------------------
+@export var health := 10
+@export var death_animation_scene: PackedScene
 @export var laser_scene: PackedScene
-@export var fire_rate: float = 1.0  # seconds between shots
+@export var ghost_scene: PackedScene  
 
-# --- References ---
-@onready var bullet_spawn: Node2D = $BulletSpawn
+@export var fire_rate := 1.5
+@export var speed := 1200.0                  # general movement speed
+@export var reposition_speed := 1200.0      # speed when repositioning
+@export var min_distance := 400.0
+@export var max_distance := 600.0
 
-# --- Firing control ---
-var can_shoot: bool = true
+@export var burst_count := 7
+@export var burst_delay := 0.1
+@export var spread_angle := 10.0
+@export var aim_cone_bias := true
 
+@export var auto_speed := 1200.0   # automatic sidescroll speed
+
+@onready var bullet_spawn := $BulletSpawn
+@onready var sprite := $Sprite2D
+@export var rotation_speed := 5.0  
+
+# -----------------------------
+# Ghost / afterimage variables
+# -----------------------------
+var ghost_timer := 0.0
+@export var ghost_interval := 0.05  
+
+# -----------------------------
+# Internal variables
+# -----------------------------
+var player: CharacterBody2D
+var target_pos := Vector2.ZERO
+var running := true
+
+# -----------------------------
+# Lifecycle
+# -----------------------------
 func _ready():
-    add_to_group("enemy")
-    start_firing()
+    var players = get_tree().get_nodes_in_group("player_body")
+    if players.size() > 0:
+        player = players[0]
+    loop()
 
-func start_firing():
-    if can_shoot:
-        shoot_laser()
-        can_shoot = false
-        # Wait fire_rate seconds before next shot
+func _exit_tree():
+    running = false
+
+func loop() -> void:
+    await get_tree().process_frame
+    while running and player:
+        # --- Attack phase ---
+        state = State.ATTACK
+        await shoot_burst()
+
+        # --- Reposition phase ---
+        state = State.REPOSITION
+        choose_reposition_target()
+
+        while running and state == State.REPOSITION:
+            await get_tree().process_frame
+
         await get_tree().create_timer(fire_rate).timeout
-        can_shoot = true
-        start_firing()  # repeat firing
 
-func shoot_laser():
-    if not laser_scene:
+# -----------------------------
+# Physics / movement
+# -----------------------------
+func _physics_process(_delta):
+    if not player:
         return
 
-    # Instantiate laser
-    var laser = laser_scene.instantiate()
-    
-    # Spawn at BulletSpawn global position
-    laser.global_position = bullet_spawn.global_position
-    
-    # Set forward velocity
-    if "velocity" in laser:
-        laser.velocity = Vector2(-600, 0)  # adjust speed/direction
+    # --- Rotate sprite to face player ---
+    var direction = (player.global_position - global_position).normalized()
+    sprite.rotation = lerp_angle(sprite.rotation, direction.angle(), rotation_speed * _delta)
 
-    # Add deferred to avoid "Parent node busy" error
+    # --- Ghost spawning ---
+    if state == State.REPOSITION:
+        ghost_timer -= _delta
+        if ghost_timer <= 0:
+            spawn_ghost()
+            ghost_timer = ghost_interval
+
+    # --- Calculate reposition velocity ---
+    var move_velocity = Vector2.ZERO
+    match state:
+        State.IDLE, State.ATTACK:
+            move_velocity = Vector2.ZERO
+        State.REPOSITION:
+            var dist = global_position.distance_to(target_pos)
+            if dist < 10:
+                state = State.IDLE
+                move_velocity = Vector2.ZERO
+            else:
+                move_velocity = (target_pos - global_position).normalized() * reposition_speed
+
+    # --- Auto-scroll (uncomment for sidescroller) ---
+    # move_velocity.x += auto_speed
+
+    # --- Apply movement ---
+    velocity = move_velocity
+    move_and_slide()
+
+    # --- Clamp inside camera ---
+    clamp_to_camera()
+
+# -----------------------------
+# Keep enemy inside camera view
+# -----------------------------
+func clamp_to_camera():
+    var cam = get_viewport().get_camera_2d()
+    if cam:
+        var cam_size = cam.get_zoom() * cam.get_viewport_rect().size / 2
+        var cam_rect = Rect2(cam.global_position - cam_size, cam_size * 2)
+        global_position.x = clamp(global_position.x, cam_rect.position.x + 50, cam_rect.position.x + cam_rect.size.x - 50)
+        global_position.y = clamp(global_position.y, cam_rect.position.y + 50, cam_rect.position.y + cam_rect.size.y - 50)
+
+# -----------------------------
+# Reposition target selection
+# -----------------------------
+func choose_reposition_target():
+    if not player:
+        return
+
+    var cam = get_viewport().get_camera_2d()
+    if not cam:
+        return
+
+    var cam_size = cam.get_zoom() * cam.get_viewport_rect().size / 2
+    var cam_rect = Rect2(cam.global_position - cam_size, cam_size * 2)
+
+    for i in range(10):
+        var ang = randf_range(-PI/4, PI/4)
+        var dist = randf_range(min_distance, max_distance)
+        var p = player.global_position + Vector2(cos(ang), sin(ang)) * dist
+
+        # Clamp to camera bounds with some padding
+        p.x = clamp(p.x, cam_rect.position.x + 50, cam_rect.position.x + cam_rect.size.x - 50)
+        p.y = clamp(p.y, cam_rect.position.y + 50, cam_rect.position.y + cam_rect.size.y - 50)
+
+        if p.x > player.global_position.x:
+            target_pos = p
+            return
+
+# -----------------------------
+# Shooting
+# -----------------------------
+func shoot_burst():
+    for i in range(burst_count):
+        shoot_one(i)
+        await get_tree().create_timer(burst_delay).timeout
+
+func shoot_one(index):
+    if not laser_scene or not player:
+        return
+
+    var laser = laser_scene.instantiate()
+    laser.global_position = bullet_spawn.global_position
+
+    var base_dir = (player.global_position - bullet_spawn.global_position).normalized()
+    var angle_offset = 0.0
+    if aim_cone_bias and burst_count > 1:
+        var mid = (burst_count - 1) / 2.0
+        var step = spread_angle / (burst_count - 1)
+        angle_offset = deg_to_rad((index - mid) * step)
+    else:
+        angle_offset = deg_to_rad(randf_range(-spread_angle/2, spread_angle/2))
+
+    var final_dir = base_dir.rotated(angle_offset)
+    laser.velocity = final_dir * 1300
+    laser.rotation = final_dir.angle()
+
     get_tree().current_scene.call_deferred("add_child", laser)
 
-func take_damage(amount: int) -> void:
+# -----------------------------
+# Ghost / afterimage
+# -----------------------------
+func spawn_ghost():
+    if not ghost_scene or not sprite:
+        return
+
+    var ghost = ghost_scene.instantiate()
+    ghost.global_position = global_position
+    ghost.rotation = sprite.global_rotation
+    ghost.scale = sprite.scale
+
+    if ghost.has_node("Sprite2D"):
+        ghost.get_node("Sprite2D").texture = sprite.texture
+        ghost.get_node("Sprite2D").frame = sprite.frame if sprite.has_method("frame") else 0
+
+    get_tree().current_scene.add_child(ghost)
+
+# -----------------------------
+# Damage / death
+# -----------------------------
+func take_damage(amount):
     health -= amount
     if health <= 0:
         die()
 
-func die() -> void:
+func die():
+    running = false
+
     if death_animation_scene:
         var anim = death_animation_scene.instantiate()
         anim.global_position = global_position
-        get_tree().current_scene.add_child(anim)
+        get_tree().get_root().call_deferred("add_child", anim)  # Always safe
+
     queue_free()

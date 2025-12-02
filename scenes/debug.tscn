@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dw2p8f653avv2"]
+[gd_scene load_steps=15 format=3 uid="uid://dw2p8f653avv2"]
 
 [ext_resource type="Texture2D" uid="uid://nrn1osh04ht5" path="res://assets/background/forest 1920x1080/forest_sky.png" id="1_kayp2"]
 [ext_resource type="Script" uid="uid://bg6ib4nrexb48" path="res://scripts/debugcanvas.gd" id="1_svo7y"]
@@ -26,11 +26,18 @@ region = Rect2(294.90894, 102.021255, 34.21057, 5.05925)
 atlas = ExtResource("9_5ph7u")
 region = Rect2(55.011295, 101.925545, 34.13052, 5.0505447)
 
+[sub_resource type="Environment" id="Environment_5ph7u"]
+background_mode = 3
+glow_enabled = true
+glow_blend_mode = 1
+glow_hdr_threshold = 1.5
+
 [node name="debug" type="Node2D"]
 
 [node name="debugcanvas" type="CanvasLayer" parent="."]
 script = ExtResource("1_svo7y")
 enemy_scene = ExtResource("7_t48sv")
+player_node = NodePath("../player")
 
 [node name="respawnbutton" type="Button" parent="debugcanvas"]
 offset_left = 8.0
@@ -39,9 +46,12 @@ offset_right = 140.0
 offset_bottom = 176.0
 text = "respawn enemy"
 
-[node name="Button" type="Button" parent="debugcanvas"]
-offset_right = 8.0
-offset_bottom = 8.0
+[node name="damageshieldbutton" type="Button" parent="debugcanvas"]
+offset_left = 17.0
+offset_top = 101.0
+offset_right = 139.0
+offset_bottom = 127.0
+text = "shield"
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 visible = false
@@ -89,19 +99,9 @@ centered = false
 [node name="player" parent="." instance=ExtResource("6_t48sv")]
 position = Vector2(159, 453)
 
-[node name="Camera2D" type="Camera2D" parent="player"]
-
-[node name="enemy1" parent="." instance=ExtResource("7_t48sv")]
-position = Vector2(828, 458)
-
-[node name="enemy2" parent="." instance=ExtResource("7_t48sv")]
-position = Vector2(838, 768)
-
-[node name="enemy3" parent="." instance=ExtResource("7_t48sv")]
-position = Vector2(836, 614)
-
-[node name="enemy4" parent="." instance=ExtResource("7_t48sv")]
-position = Vector2(828, 300)
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(159, 453)
+scale = Vector2(0.5, 0.5)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -124,6 +124,10 @@ nine_patch_stretch = true
 texture_under = SubResource("AtlasTexture_05sef")
 texture_progress = SubResource("AtlasTexture_vf3rk")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5ph7u")
+
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
+[connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
 
 [editable path="player"]

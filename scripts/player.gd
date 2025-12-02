@@ -30,7 +30,7 @@ var can_use_super := true
 @export var tracer_scene: PackedScene
 
 # --- Shield system ---
-@export var max_shield: float = 100.0
+@export var max_shield: float = 1000000.0
 var shield: float = max_shield
 var shieldbar: TextureProgressBar
 @onready var shield_sprite: Sprite2D = $ShieldArea/ShieldSprite
@@ -169,14 +169,31 @@ func update_shieldbar():
 
 func show_shield_hit(hit_global_pos: Vector2):
     var shield_node = $ShieldArea/ShieldSprite
-    if shield_node and shield_node.material:
-        var local = shield_node.to_local(hit_global_pos)
-        var uv = (local / shield_node.texture.get_size()) + Vector2(0.5, 0.5)
-        shield_node.material.set("shader_parameter/hit_uv", uv)
-        shield_node.material.set("shader_parameter/hit_strength", 1.0)
+    if not shield_node or not shield_node.material:
+        return
 
-        var tween = create_tween()
-        tween.tween_property(shield_node.material, "shader_parameter/hit_strength", 0.0, 0.3)
+    var mat = shield_node.material
+
+    # Compute UV of hit
+    var local = shield_node.to_local(hit_global_pos)
+    var uv = (local / shield_node.texture.get_size()) + Vector2(0.5, 0.5)
+    mat.set_shader_parameter("hit_uv", uv)
+    mat.set_shader_parameter("hit_strength", 1.0)
+
+    # Animate hit_strength manually (burst-safe)
+    animate_shield_hit(mat)
+
+
+# Make this an async function so it can use `await`
+func animate_shield_hit(mat: ShaderMaterial) -> void:
+    var duration = 0.2
+    var timer = 0.0
+    while timer < duration:
+        await get_tree().process_frame
+        timer += get_process_delta_time()
+        var t = timer / duration
+        mat.set_shader_parameter("hit_strength", 1.0 * (1.0 - t))
+    mat.set_shader_parameter("hit_strength", 0.0)
 
 # ============================================================
 #                  Health system
