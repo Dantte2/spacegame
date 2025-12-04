@@ -27,6 +27,7 @@ var state: State = State.IDLE
 @onready var bullet_spawn := $BulletSpawn
 @onready var sprite := $Sprite2D
 @export var rotation_speed := 5.0  
+@onready var muzzle_flash := $BulletSpawn/MuzzleFlash
 
 # -----------------------------
 # Ghost / afterimage variables
@@ -159,6 +160,10 @@ func shoot_burst():
 func shoot_one(index):
     if not laser_scene or not player:
         return
+        
+    #play muzzleflash each shot
+    if muzzle_flash:
+        muzzle_flash.restart()
 
     var laser = laser_scene.instantiate()
     laser.global_position = bullet_spawn.global_position

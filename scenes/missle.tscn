@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://u0j564qjv3d5"]
+[gd_scene load_steps=13 format=3 uid="uid://u0j564qjv3d5"]
 
 [ext_resource type="Texture2D" uid="uid://4gi8qom6b61l" path="res://assets/projectiles/missle/Missile02A.png" id="1_3peva"]
 [ext_resource type="Script" uid="uid://5kpg5ncjsqyp" path="res://scripts/missle.gd" id="1_faiip"]
+[ext_resource type="PackedScene" uid="uid://cxmp3ogdtcnhc" path="res://scenes/missileexplosion.tscn" id="2_2f2dy"]
 [ext_resource type="Texture2D" uid="uid://qdani7sdt563" path="res://assets/player/sprite_player_spaceship_exhaust_high.png" id="2_faiip"]
 [ext_resource type="Shader" uid="uid://fgwax52ckpq0" path="res://shaders/missle.gdshader" id="3_0cuvc"]
 [ext_resource type="Script" uid="uid://dxja2e1ipa4vu" path="res://addons/trail_2d/trail_2d.gd" id="4_iusbo"]
@@ -47,6 +48,7 @@ scale = Vector2(0.5, 0.5)
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_faiip")
+explosion_scene = ExtResource("2_2f2dy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708

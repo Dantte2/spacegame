@@ -113,7 +113,6 @@ shader_parameter/hit_strength = 0.0
 shader_parameter/hit_glow_radius = 0.1
 shader_parameter/hit_color = Vector4(0, 0.6, 1, 1)
 shader_parameter/break_strength = 0.0
-shader_parameter/fragment_size = 0.02
 shader_parameter/fragment_color = Vector4(0.5, 0.8, 1, 1)
 shader_parameter/time = 0.0
 
@@ -121,7 +120,7 @@ shader_parameter/time = 0.0
 radius = 94.0
 height = 292.0
 
-[node name="player" type="CharacterBody2D" groups=["player_body"]]
+[node name="player" type="CharacterBody2D" groups=["player_body", "player_shield"]]
 z_index = -10
 scale = Vector2(0.5, 0.5)
 collision_mask = 2
