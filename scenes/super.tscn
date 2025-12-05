@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://gjr0nf4o7uon"]
+[gd_scene load_steps=26 format=3 uid="uid://gjr0nf4o7uon"]
 
 [ext_resource type="Script" uid="uid://cfig64wnwsol8" path="res://scripts/super.gd" id="1_it2rv"]
 [ext_resource type="Texture2D" uid="uid://c3jrmdyvhjr37" path="res://assets/projectiles/super/1_0.png" id="1_n8d1g"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://khh2w5x0o1um" path="res://assets/projectiles/super/1_12.png" id="13_upq4r"]
 [ext_resource type="Texture2D" uid="uid://cd46ci3iffw4j" path="res://assets/projectiles/super/1_13.png" id="14_uvh5c"]
 [ext_resource type="Texture2D" uid="uid://vtkgx6s2hghi" path="res://assets/projectiles/super/1_14.png" id="15_6utf8"]
+[ext_resource type="Texture2D" uid="uid://b0yp1lgv6pnba" path="res://assets/particles/glowing_circle.png" id="18_arwpw"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n8d1g"]
 radius = 7.0
@@ -74,19 +75,59 @@ animations = [{
 "speed": 20.0
 }]
 
-[node name="super" type="Area2D"]
+[sub_resource type="Gradient" id="Gradient_j1l5h"]
+offsets = PackedFloat32Array(0.06603774, 0.3207547, 0.6226415)
+colors = PackedColorArray(1.318, 0.609, 1.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_arwpw"]
+gradient = SubResource("Gradient_j1l5h")
+
+[sub_resource type="Curve" id="Curve_272ck"]
+_data = [Vector2(0.015151501, 0), 0.0, 0.0, 0, 0, Vector2(0.47727275, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_j1l5h"]
+curve = SubResource("Curve_272ck")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cc7ec"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(680, 20, 1)
+direction = Vector3(-1, 0, 0)
+spread = 0.0
+initial_velocity_min = 1.0
+initial_velocity_max = 5000.0
+gravity = Vector3(0, 0, 0)
+tangential_accel_min = 99.99999
+tangential_accel_max = 99.99999
+scale_min = 0.29999998
+scale_max = 0.29999998
+scale_curve = SubResource("CurveTexture_j1l5h")
+color_ramp = SubResource("GradientTexture1D_arwpw")
+
+[node name="super" type="CharacterBody2D"]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_it2rv")
 explosion_scene = ExtResource("2_flpew")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-scale = Vector2(45, 45)
 shape = SubResource("CircleShape2D_n8d1g")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-scale = Vector2(8, 8)
+scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_qkodl")
 animation = &"super"
 frame = 2
 frame_progress = 0.607409
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="AnimatedSprite2D"]
+process_mode = 3
+scale = Vector2(0.017401591, 0.3571696)
+amount = 200
+texture = ExtResource("18_arwpw")
+lifetime = 0.3
+preprocess = 1.0
+randomness = 1.0
+visibility_rect = Rect2(-5000, -1000, 2000, 2000)
+process_material = SubResource("ParticleProcessMaterial_cc7ec")

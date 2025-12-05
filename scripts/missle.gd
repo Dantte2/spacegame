@@ -17,7 +17,7 @@ var state_timer: float = 0.0
 
 # --- References ---
 @onready var exhaust: AnimatedSprite2D = $Exhaust
-@onready var trail: Node = $Trail2D
+@onready var trail: GPUParticles2D = $GPUParticles2D  # Make sure this exists
 
 # --- Homing target ---
 var target: Node2D = null
@@ -33,8 +33,7 @@ func _ready():
     if exhaust:
         exhaust.visible = false
     if trail:
-        trail.visible = false
-        trail.set_physics_process(false)
+        trail.emitting = false  # Start disabled
 
     # Create a one-shot timer for trail
     trail_timer = Timer.new()
@@ -48,10 +47,8 @@ func _ready():
 # --- Trail timer callback ---
 func _on_trail_timer_timeout():
     if trail:
-        trail.clear_points()  # Prevent snapping
         trail.global_position = global_position
-        trail.visible = true
-        trail.set_physics_process(true)
+        trail.emitting = true  # Start GPUParticles emission
 
 # --- Lifetime destruction ---
 func destroy_after_lifetime() -> void:
@@ -71,7 +68,6 @@ func _physics_process(delta):
                 if exhaust:
                     exhaust.visible = true
                     exhaust.play("exhaust")
-                # Start trail timer instead of enabling immediately
                 if trail_timer:
                     trail_timer.start()
 

@@ -14,7 +14,7 @@ var health: float = max_health
 @export var death_animation_scene: PackedScene
 var running := true
 
-# --- References ---
+# --- References ---e
 var player: Node2D
 
 func _ready() -> void:

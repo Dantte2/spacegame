@@ -8,7 +8,7 @@ extends RayCast2D
 @export var is_casting := false: set = set_is_casting
 
 # Damage values
-@export var damage_to_shield := 25.0      # damage per second to shield
+@export var damage_to_shield := 2000.0      # damage per second to shield
 @export var damage_to_health := 1.0      # damage per second to health
 
 var tween: Tween = null
