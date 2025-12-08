@@ -41,16 +41,17 @@ animations = [{
 
 [sub_resource type="Gradient" id="Gradient_2f2dy"]
 offsets = PackedFloat32Array(0.06603774, 0.3220339, 1)
-colors = PackedColorArray(0.745, 1.161, 1.357, 1, 0, 0, 0, 1, 0.14767182, 0.14767179, 0.14767179, 1)
+colors = PackedColorArray(0.745, 1.161, 1.357, 1, 0, 0, 0, 1, 0.08468998, 0.08468992, 0.08468989, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_epgiw"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_2f2dy"]
 gradient = SubResource("Gradient_2f2dy")
+use_hdr = true
 
 [sub_resource type="Curve" id="Curve_4ufnt"]
 _data = [Vector2(0.015151501, 0), 0.0, 0.0, 0, 0, Vector2(0.47727275, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_n017n"]
+[sub_resource type="CurveTexture" id="CurveTexture_epgiw"]
 curve = SubResource("Curve_4ufnt")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mrj4v"]
@@ -59,15 +60,13 @@ emission_shape = 3
 emission_box_extents = Vector3(3100, 20, 1)
 direction = Vector3(-1, 0, 0)
 spread = 5.0
-initial_velocity_min = 1.0
-initial_velocity_max = 5000.0
 gravity = Vector3(0, 0, 0)
 tangential_accel_min = 99.99999
 tangential_accel_max = 99.99999
 scale_min = 0.29999998
 scale_max = 0.29999998
-scale_curve = SubResource("CurveTexture_n017n")
-color_ramp = SubResource("GradientTexture1D_epgiw")
+scale_curve = SubResource("CurveTexture_epgiw")
+color_ramp = SubResource("GradientTexture1D_2f2dy")
 
 [node name="missle" type="CharacterBody2D"]
 scale = Vector2(0.5, 0.5)
@@ -98,8 +97,9 @@ process_mode = 3
 scale = Vector2(0.017401591, 0.3571696)
 amount = 200
 texture = ExtResource("7_epgiw")
-lifetime = 0.3
+lifetime = 0.2
 preprocess = 1.0
-randomness = 1.0
+fixed_fps = 60
 visibility_rect = Rect2(-5000, -1000, 2000, 2000)
+trail_sections = 29
 process_material = SubResource("ParticleProcessMaterial_mrj4v")

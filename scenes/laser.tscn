@@ -1,18 +1,18 @@
 [gd_scene load_steps=8 format=3 uid="uid://slin2nolfv5p"]
 
 [ext_resource type="Script" uid="uid://s3qc5ouiu5m8" path="res://scripts/laser.gd" id="1_a7dhc"]
-[ext_resource type="Texture2D" uid="uid://cytkv470dod6x" path="res://assets/projectiles/bullets/Fire Effect and Bullet 16x16.png" id="1_xmihv"]
 [ext_resource type="Script" uid="uid://dxja2e1ipa4vu" path="res://addons/trail_2d/trail_2d.gd" id="2_a7dhc"]
+[ext_resource type="Texture2D" uid="uid://dnd5k1ld16qip" path="res://assets/projectiles/bullets/19.png" id="2_jjj73"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xmihv"]
-atlas = ExtResource("1_xmihv")
-region = Rect2(0, 34, 15, 17)
+[sub_resource type="AtlasTexture" id="AtlasTexture_412cd"]
+atlas = ExtResource("2_jjj73")
+region = Rect2(0, 0, 246, 142)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5no5p"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xmihv")
+"texture": SubResource("AtlasTexture_412cd")
 }],
 "loop": true,
 "name": &"bullet",
@@ -31,8 +31,8 @@ collision_mask = 2
 script = ExtResource("1_a7dhc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-visible = false
 z_index = 10
+scale = Vector2(0.15, 0.15)
 sprite_frames = SubResource("SpriteFrames_5no5p")
 animation = &"bullet"
 frame_progress = 0.501339
@@ -46,6 +46,8 @@ shape = SubResource("CapsuleShape2D_jjj73")
 width = 2.0
 gradient = SubResource("Gradient_jjj73")
 joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 antialiased = true
 script = ExtResource("2_a7dhc")
 metadata/_custom_type_script = "uid://dxja2e1ipa4vu"

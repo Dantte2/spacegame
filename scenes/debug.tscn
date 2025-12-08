@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://c8t6ci14xvmh" path="res://scenes/player.tscn" id="6_t48sv"]
 [ext_resource type="PackedScene" uid="uid://bg0nh4fulwty8" path="res://scenes/enemy_1.tscn" id="7_t48sv"]
 [ext_resource type="Texture2D" uid="uid://bgaxwnigmbuxe" path="res://assets/ui/bars/04.png" id="9_5ph7u"]
-[ext_resource type="PackedScene" uid="uid://caqixb4uk1em8" path="res://scenes/enemy_2.tscn" id="10_o7ao6"]
+[ext_resource type="PackedScene" uid="uid://bpkiveafyhfog" path="res://scenes/enemy_3.tscn" id="11_naxnx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o7ao6"]
 atlas = ExtResource("9_5ph7u")
@@ -109,7 +109,7 @@ centered = false
 position = Vector2(159, 453)
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(159, 453)
+position = Vector2(964, 540)
 scale = Vector2(0.5, 0.5)
 
 [node name="UI" type="CanvasLayer" parent="."]
@@ -137,8 +137,9 @@ texture_progress = SubResource("AtlasTexture_vf3rk")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5ph7u")
 
-[node name="enemy2" parent="." instance=ExtResource("10_o7ao6")]
-position = Vector2(1033, 450)
+[node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
+position = Vector2(1043, 494)
+laser_scene = null
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
