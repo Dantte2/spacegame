@@ -139,7 +139,6 @@ environment = SubResource("Environment_5ph7u")
 
 [node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
 position = Vector2(1043, 494)
-laser_scene = null
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
