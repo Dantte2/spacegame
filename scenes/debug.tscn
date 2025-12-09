@@ -66,7 +66,6 @@ script = ExtResource("3_naxnx")
 visible = false
 
 [node name="sky" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.2, 0.2)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/sky"]
@@ -138,7 +137,7 @@ texture_progress = SubResource("AtlasTexture_vf3rk")
 environment = SubResource("Environment_5ph7u")
 
 [node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
-position = Vector2(1043, 494)
+position = Vector2(1774, 524)
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
