@@ -9,7 +9,7 @@ extends CharacterBody2D
 @export var bullets_per_shot := 40
 @export var bullet_speed := 700.0
 @export var fire_direction := Vector2.LEFT
-@export var cone_angle := 30.0
+@export var cone_angle := 20.0
 
 # --- Randomness ---
 @export var speed_jitter := 0.2

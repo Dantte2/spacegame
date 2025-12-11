@@ -90,8 +90,6 @@ position = Vector2(-53, 0)
 sprite_frames = SubResource("SpriteFrames_04qyp")
 animation = &"exhaust"
 
-[node name="Camera2D" type="Camera2D" parent="."]
-
 [node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 process_mode = 3
 scale = Vector2(0.017401591, 0.3571696)

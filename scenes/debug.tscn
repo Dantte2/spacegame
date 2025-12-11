@@ -1,10 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://dw2p8f653avv2"]
+[gd_scene load_steps=18 format=3 uid="uid://dw2p8f653avv2"]
 
 [ext_resource type="Texture2D" uid="uid://nrn1osh04ht5" path="res://assets/background/forest 1920x1080/forest_sky.png" id="1_kayp2"]
 [ext_resource type="Script" uid="uid://bg6ib4nrexb48" path="res://scripts/debugcanvas.gd" id="1_svo7y"]
 [ext_resource type="Texture2D" uid="uid://jkmucmc0yp83" path="res://assets/background/forest 1920x1080/forest_mountain.png" id="2_j2wbo"]
 [ext_resource type="Script" uid="uid://m1jiedy2y2j6" path="res://scripts/fps_label.gd" id="3_naxnx"]
 [ext_resource type="Texture2D" uid="uid://b45rmb3mkv5ik" path="res://assets/background/forest 1920x1080/forest_back.png" id="3_t48sv"]
+[ext_resource type="Script" uid="uid://bos8qyql5wdfr" path="res://scripts/parallax_background.gd" id="4_05sef"]
 [ext_resource type="Texture2D" uid="uid://b7xwrswtanx08" path="res://assets/background/forest 1920x1080/forest_mid.png" id="4_svo7y"]
 [ext_resource type="Texture2D" uid="uid://ijcv6rkg8pyc" path="res://assets/background/forest 1920x1080/forest_short.png" id="5_5ph7u"]
 [ext_resource type="PackedScene" uid="uid://c8t6ci14xvmh" path="res://scenes/player.tscn" id="6_t48sv"]
@@ -63,7 +64,7 @@ offset_bottom = 66.0
 script = ExtResource("3_naxnx")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-visible = false
+script = ExtResource("4_05sef")
 
 [node name="sky" type="ParallaxLayer" parent="ParallaxBackground"]
 motion_mirroring = Vector2(1920, 0)
@@ -73,7 +74,7 @@ texture = ExtResource("1_kayp2")
 centered = false
 
 [node name="mountains" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.4, 0.4)
+motion_scale = Vector2(3, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/mountains"]
@@ -82,7 +83,7 @@ texture = ExtResource("2_j2wbo")
 centered = false
 
 [node name="treesfar" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.6, 0.6)
+motion_scale = Vector2(5, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/treesfar"]
@@ -90,7 +91,7 @@ texture = ExtResource("3_t48sv")
 centered = false
 
 [node name="treesmid" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0.8, 0.8)
+motion_scale = Vector2(7, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/treesmid"]
@@ -98,6 +99,7 @@ texture = ExtResource("4_svo7y")
 centered = false
 
 [node name="treesclose" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(16, 1)
 motion_mirroring = Vector2(1920, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground/treesclose"]
@@ -110,6 +112,7 @@ position = Vector2(159, 453)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(964, 540)
 scale = Vector2(0.5, 0.5)
+enabled = false
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -137,7 +140,7 @@ texture_progress = SubResource("AtlasTexture_vf3rk")
 environment = SubResource("Environment_5ph7u")
 
 [node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
-position = Vector2(1774, 524)
+position = Vector2(1777, 529)
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]

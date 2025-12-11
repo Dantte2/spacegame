@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcn617637g767"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bp3ah"]
+radius = 8.183394
+height = 16.366789
+
+[node name="energyball" type="Area2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5707964
+scale = Vector2(0.7416235, -1.2219868)
+shape = SubResource("CapsuleShape2D_bp3ah")
+
+[node name="Line2D" type="Line2D" parent="."]
+rotation = 1.5707964
+scale = Vector2(0.9330383, 1.984133)
+points = PackedVector2Array(0, 0, 1, 0)
+default_color = Color(0.8627451, 0.13333334, 0.05490196, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+round_precision = 32
+antialiased = true

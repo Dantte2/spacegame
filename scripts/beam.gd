@@ -1,7 +1,7 @@
 extends RayCast2D
 
 @export var cast_speed := 7000.0
-@export var max_length := 1920.0
+@export var max_length := 2300.0
 @export var start_distance := 40.0
 @export var growth_time := 0.1
 @export var color := Color.WHITE: set = set_color

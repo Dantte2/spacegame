@@ -30,7 +30,7 @@ var can_use_super := true
 @export var tracer_scene: PackedScene
 
 # --- Shield system ---
-@export var max_shield: float = 10000.0
+@export var max_shield: float = 100000.0
 var shield: float = max_shield
 var shieldbar: TextureProgressBar
 @onready var shield_sprite: Sprite2D = $ShieldArea/ShieldSprite

@@ -12,17 +12,14 @@ var state: State = State.IDLE
 @export var ghost_scene: PackedScene  
 
 @export var fire_rate := 1.5
-@export var speed := 1200.0                  # general movement speed
 @export var reposition_speed := 1200.0      # speed when repositioning
-@export var min_distance := 400.0
-@export var max_distance := 600.0
+@export var min_distance := 700.0
+@export var max_distance := 900.0
 
 @export var burst_count := 7
 @export var burst_delay := 0.1
 @export var spread_angle := 10.0
 @export var aim_cone_bias := true
-
-@export var auto_speed := 1200.0   # automatic sidescroll speed
 
 @onready var bullet_spawn := $BulletSpawn
 @onready var sprite := $Sprite2D
@@ -101,53 +98,45 @@ func _physics_process(_delta):
             else:
                 move_velocity = (target_pos - global_position).normalized() * reposition_speed
 
-    # --- Auto-scroll (uncomment for sidescroller) ---
-    # move_velocity.x += auto_speed
-
     # --- Apply movement ---
     velocity = move_velocity
     move_and_slide()
 
-    # --- Clamp inside camera ---
-    clamp_to_camera()
+    # --- Keep enemy inside screen ---
+    clamp_to_screen()
 
 # -----------------------------
-# Keep enemy inside camera view
+# Clamp inside viewport (camera-independent)
 # -----------------------------
-func clamp_to_camera():
-    var cam = get_viewport().get_camera_2d()
-    if cam:
-        var cam_size = cam.get_zoom() * cam.get_viewport_rect().size / 2
-        var cam_rect = Rect2(cam.global_position - cam_size, cam_size * 2)
-        global_position.x = clamp(global_position.x, cam_rect.position.x + 50, cam_rect.position.x + cam_rect.size.x - 50)
-        global_position.y = clamp(global_position.y, cam_rect.position.y + 50, cam_rect.position.y + cam_rect.size.y - 50)
+func clamp_to_screen(padding := 50):
+    var vp_rect = get_viewport().get_visible_rect()
+    global_position.x = clamp(global_position.x, vp_rect.position.x + padding, vp_rect.position.x + vp_rect.size.x - padding)
+    global_position.y = clamp(global_position.y, vp_rect.position.y + padding, vp_rect.position.y + vp_rect.size.y - padding)
 
 # -----------------------------
-# Reposition target selection
+# Reposition target selection (in front of player)
 # -----------------------------
 func choose_reposition_target():
     if not player:
         return
 
-    var cam = get_viewport().get_camera_2d()
-    if not cam:
-        return
-
-    var cam_size = cam.get_zoom() * cam.get_viewport_rect().size / 2
-    var cam_rect = Rect2(cam.global_position - cam_size, cam_size * 2)
+    var vp_rect = get_viewport().get_visible_rect()
+    var padding = 50
 
     for i in range(10):
-        var ang = randf_range(-PI/4, PI/4)
+        # Example: enemies spawn in front of player horizontally
+        var front_dir = Vector2(1, 0)  # adjust for your sidescroller
+        var angle_offset = randf_range(-PI/6, PI/6)
+        var dir = front_dir.rotated(angle_offset)
         var dist = randf_range(min_distance, max_distance)
-        var p = player.global_position + Vector2(cos(ang), sin(ang)) * dist
+        var p = player.global_position + dir * dist
 
-        # Clamp to camera bounds with some padding
-        p.x = clamp(p.x, cam_rect.position.x + 50, cam_rect.position.x + cam_rect.size.x - 50)
-        p.y = clamp(p.y, cam_rect.position.y + 50, cam_rect.position.y + cam_rect.size.y - 50)
+        # Clamp to viewport bounds
+        p.x = clamp(p.x, vp_rect.position.x + padding, vp_rect.position.x + vp_rect.size.x - padding)
+        p.y = clamp(p.y, vp_rect.position.y + padding, vp_rect.position.y + vp_rect.size.y - padding)
 
-        if p.x > player.global_position.x:
-            target_pos = p
-            return
+        target_pos = p
+        return
 
 # -----------------------------
 # Shooting
@@ -160,8 +149,7 @@ func shoot_burst():
 func shoot_one(index):
     if not laser_scene or not player:
         return
-        
-    #play muzzleflash each shot
+
     if muzzle_flash:
         muzzle_flash.restart()
 
@@ -215,6 +203,6 @@ func die():
     if death_animation_scene:
         var anim = death_animation_scene.instantiate()
         anim.global_position = global_position
-        get_tree().get_root().call_deferred("add_child", anim)  # Always safe
+        get_tree().get_root().call_deferred("add_child", anim)
 
     queue_free()
