@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dw2p8f653avv2"]
+[gd_scene load_steps=20 format=3 uid="uid://dw2p8f653avv2"]
 
 [ext_resource type="Texture2D" uid="uid://nrn1osh04ht5" path="res://assets/background/forest 1920x1080/forest_sky.png" id="1_kayp2"]
 [ext_resource type="Script" uid="uid://bg6ib4nrexb48" path="res://scripts/debugcanvas.gd" id="1_svo7y"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://bg0nh4fulwty8" path="res://scenes/enemy_1.tscn" id="7_t48sv"]
 [ext_resource type="Texture2D" uid="uid://bgaxwnigmbuxe" path="res://assets/ui/bars/04.png" id="9_5ph7u"]
 [ext_resource type="PackedScene" uid="uid://bpkiveafyhfog" path="res://scenes/enemy_3.tscn" id="11_naxnx"]
+[ext_resource type="PackedScene" uid="uid://deruu8hgkc3j8" path="res://scenes/enemy_4.tscn" id="12_05sef"]
+[ext_resource type="PackedScene" uid="uid://caqixb4uk1em8" path="res://scenes/enemy_2.tscn" id="14_oydge"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o7ao6"]
 atlas = ExtResource("9_5ph7u")
@@ -64,6 +66,7 @@ offset_bottom = 66.0
 script = ExtResource("3_naxnx")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+visible = false
 script = ExtResource("4_05sef")
 
 [node name="sky" type="ParallaxLayer" parent="ParallaxBackground"]
@@ -140,7 +143,16 @@ texture_progress = SubResource("AtlasTexture_vf3rk")
 environment = SubResource("Environment_5ph7u")
 
 [node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
-position = Vector2(1777, 529)
+position = Vector2(1760, 499)
+
+[node name="enemy4" parent="." instance=ExtResource("12_05sef")]
+position = Vector2(1723, 594)
+
+[node name="enemy1" parent="." instance=ExtResource("7_t48sv")]
+position = Vector2(1465, 164)
+
+[node name="enemy2" parent="." instance=ExtResource("14_oydge")]
+position = Vector2(1817, 101)
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
