@@ -14,7 +14,9 @@ var hit_targets := []
 
 func _ready():
     if sprite:
-        sprite.play()
+        sprite.play("pink")
+        sprite.rotation = randf_range(0, TAU)  # random rotation
+
 
     # Collision layers (same as bullet)
     collision_layer = 2
