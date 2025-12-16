@@ -17,6 +17,7 @@ extends CharacterBody2D
 var target: Node2D = null
 var can_fire := true
 
+@export var muzzle_delay := 0.90 
 @onready var sprite := $Sprite2D
 @onready var bullet_spawn := $BulletSpawn
 @onready var exhaust := $Exhaust
@@ -85,16 +86,39 @@ func _start_timer():
         var t = randf_range(fire_delay_min, fire_delay_max)
         $Timer.start(t)
 
-func _on_Timer_timeout():
-    if target and bullet_scene:
-        var bullet = bullet_scene.instantiate()
-        get_tree().current_scene.add_child(bullet)
-        bullet.global_position = bullet_spawn.global_position
+@export var muzzle_flash_scene: PackedScene  # assign your muzzle flash scene here
 
-        # Fire toward player
-        bullet.velocity = (target.global_position - bullet.global_position).normalized() * -1
+
+           
+# -----------------------------
+# ON TIMER TIMEOUT (firing)
+# -----------------------------
+func _on_Timer_timeout():
+    if not target or not bullet_scene:
+        _start_timer()
+        return
+
+    # --- Spawn muzzle flash first ---
+    if muzzle_flash_scene:
+        var flash = muzzle_flash_scene.instantiate()
+        bullet_spawn.add_child(flash)  # attach to BulletSpawn
+        flash.global_position = bullet_spawn.global_position
+        flash.rotation = bullet_spawn.rotation
+        if flash.has_method("restart"):
+            flash.restart()  # for AnimatedSprite2D or CPUParticles2D
+
+    # --- Wait for muzzle flash duration ---
+    await get_tree().create_timer(muzzle_delay).timeout
+
+    # --- Fire bullet ---
+    var bullet = bullet_scene.instantiate()
+    get_tree().current_scene.add_child(bullet)
+    bullet.global_position = bullet_spawn.global_position
+    bullet.velocity = (target.global_position - bullet.global_position).normalized() * -1
 
     _start_timer()
+
+
 
 # -----------------------------
 # UTILITY: find nearest player

@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://qy4dmmwesp4w"]
+[gd_scene load_steps=11 format=3 uid="uid://qy4dmmwesp4w"]
 
 [ext_resource type="Texture2D" uid="uid://ccdyqcmbwq5nm" path="res://assets/enemy/Ship2/Ship2.png" id="1_35jhg"]
 [ext_resource type="Script" uid="uid://uk2ox16pn3b" path="res://scripts/enemy_5.gd" id="1_bh3pa"]
 [ext_resource type="Texture2D" uid="uid://6ffk6x6c4apk" path="res://assets/enemy/Ship2/Exhaust/Turbo_flight/Exhaust1/exhaust1.png" id="2_6yonu"]
 [ext_resource type="PackedScene" uid="uid://bcn617637g767" path="res://scenes/energyball.tscn" id="2_xwdeg"]
 [ext_resource type="Texture2D" uid="uid://bix8j6ahajkta" path="res://assets/enemy/Ship2/Exhaust/Turbo_flight/Exhaust1/exhaust2.png" id="3_bh3pa"]
+[ext_resource type="PackedScene" uid="uid://cy5j36fqnhgwm" path="res://scenes/beam_particles_2d.tscn" id="4_t0chb"]
 [ext_resource type="Texture2D" uid="uid://f27rqepmls5x" path="res://assets/enemy/Ship2/Exhaust/Turbo_flight/Exhaust1/exhaust3.png" id="4_xwdeg"]
 [ext_resource type="Texture2D" uid="uid://cax72c6cju6bk" path="res://assets/enemy/Ship2/Exhaust/Turbo_flight/Exhaust1/exhaust4.png" id="5_t0chb"]
 
@@ -36,6 +37,7 @@ animations = [{
 scale = Vector2(1.5, 1.5)
 script = ExtResource("1_bh3pa")
 bullet_scene = ExtResource("2_xwdeg")
+muzzle_flash_scene = ExtResource("4_t0chb")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_35jhg")
@@ -46,7 +48,7 @@ rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_6yonu")
 
 [node name="BulletSpawn" type="Node2D" parent="."]
-position = Vector2(-35, 0)
+position = Vector2(-38.666668, 0)
 
 [node name="Exhaust" type="AnimatedSprite2D" parent="."]
 z_index = -1

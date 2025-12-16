@@ -1,7 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://draqha76db248"]
+[gd_scene load_steps=14 format=3 uid="uid://draqha76db248"]
 
 [ext_resource type="Script" uid="uid://cutyisdjus6gv" path="res://scripts/beam.gd" id="1_5ijbd"]
 [ext_resource type="Texture2D" uid="uid://b0yp1lgv6pnba" path="res://assets/particles/glowing_circle.png" id="2_hl8vi"]
+[ext_resource type="PackedScene" uid="uid://cy5j36fqnhgwm" path="res://scenes/beam_particles_2d.tscn" id="3_daiji"]
 
 [sub_resource type="Gradient" id="Gradient_hl8vi"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -28,34 +29,6 @@ scale_max = 0.5
 scale_curve = SubResource("CurveTexture_bawts")
 color = Color(2, 0, 0.012, 1)
 color_ramp = SubResource("GradientTexture1D_daiji")
-
-[sub_resource type="Gradient" id="Gradient_daiji"]
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_bawts"]
-gradient = SubResource("Gradient_daiji")
-
-[sub_resource type="Curve" id="Curve_hl8vi"]
-_data = [Vector2(0.015151501, 0), 0.0, 0.0, 0, 0, Vector2(0.47727275, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_daiji"]
-curve = SubResource("Curve_hl8vi")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bawts"]
-particle_flag_disable_z = true
-emission_shape = 3
-emission_box_extents = Vector3(680, 20, 1)
-direction = Vector3(-1, 0, 0)
-spread = 0.0
-gravity = Vector3(0, 0, 0)
-tangential_accel_min = 99.99999
-tangential_accel_max = 99.99999
-scale_min = 0.29999998
-scale_max = 0.29999998
-scale_curve = SubResource("CurveTexture_daiji")
-color = Color(2, 0, 0.012, 1)
-color_ramp = SubResource("GradientTexture1D_bawts")
 
 [sub_resource type="Gradient" id="Gradient_bawts"]
 colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
@@ -104,13 +77,7 @@ texture = ExtResource("2_hl8vi")
 lifetime = 0.3
 process_material = SubResource("ParticleProcessMaterial_8wlve")
 
-[node name="BeamParticles2D" type="GPUParticles2D" parent="."]
-emitting = false
-amount = 50
-texture = ExtResource("2_hl8vi")
-preprocess = 1.0
-randomness = 1.0
-process_material = SubResource("ParticleProcessMaterial_bawts")
+[node name="BeamParticles2D" parent="." instance=ExtResource("3_daiji")]
 
 [node name="CollisionParticles2D" type="GPUParticles2D" parent="."]
 emitting = false
