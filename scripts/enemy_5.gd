@@ -8,8 +8,8 @@ extends CharacterBody2D
 @export var bullet_scene: PackedScene
 @export var aim_line_length := 3000.0
 
-@export var bullet_offset := Vector2(50, 0)   # distance from sprite center to nose
-@export var exhaust_offset := Vector2(-50, 0) # distance from sprite center to rear
+@export var bullet_offset := Vector2(50, 0)   
+@export var exhaust_offset := Vector2(-50, 0) 
 
 # -----------------------------
 # INTERNAL VARIABLES
@@ -22,10 +22,16 @@ var can_fire := true
 @onready var bullet_spawn := $BulletSpawn
 @onready var exhaust := $Exhaust
 
+# --- Health system ---
+@export var max_health: int = 100
+var health: int
+@export var death_animation_scene: PackedScene
+
 # -----------------------------
 # READY
 # -----------------------------
 func _ready():
+    health = max_health
     # Setup timer
     if $Timer:
         $Timer.one_shot = true
@@ -132,3 +138,17 @@ func _get_nearest_player(players: Array) -> Node2D:
             min_dist = d
             nearest = p
     return nearest
+    
+# --- Damage Handling ---
+func take_damage(amount: int):
+    health -= amount
+    if health <= 0:
+        die()
+
+func die():
+    if death_animation_scene:
+        var anim = death_animation_scene.instantiate()
+        anim.global_position = global_position
+        get_tree().current_scene.call_deferred("add_child", anim)
+
+    queue_free()

@@ -11,10 +11,10 @@
 [ext_resource type="PackedScene" uid="uid://c8t6ci14xvmh" path="res://scenes/player.tscn" id="6_t48sv"]
 [ext_resource type="PackedScene" uid="uid://bg0nh4fulwty8" path="res://scenes/enemy_1.tscn" id="7_t48sv"]
 [ext_resource type="Texture2D" uid="uid://bgaxwnigmbuxe" path="res://assets/ui/bars/04.png" id="9_5ph7u"]
-[ext_resource type="PackedScene" uid="uid://bpkiveafyhfog" path="res://scenes/enemy_3.tscn" id="11_naxnx"]
 [ext_resource type="PackedScene" uid="uid://qy4dmmwesp4w" path="res://scenes/enemy_5.tscn" id="12_05sef"]
-[ext_resource type="PackedScene" uid="uid://deruu8hgkc3j8" path="res://scenes/enemy_4.tscn" id="13_vf3rk"]
-[ext_resource type="PackedScene" uid="uid://caqixb4uk1em8" path="res://scenes/enemy_2.tscn" id="14_oydge"]
+[ext_resource type="PackedScene" uid="uid://caqixb4uk1em8" path="res://scenes/enemy_2.tscn" id="13_vf3rk"]
+[ext_resource type="PackedScene" uid="uid://deruu8hgkc3j8" path="res://scenes/enemy_4.tscn" id="14_oydge"]
+[ext_resource type="PackedScene" uid="uid://bpkiveafyhfog" path="res://scenes/enemy_3.tscn" id="14_pleq2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o7ao6"]
 atlas = ExtResource("9_5ph7u")
@@ -67,7 +67,6 @@ offset_bottom = 66.0
 script = ExtResource("3_naxnx")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-visible = false
 script = ExtResource("4_05sef")
 
 [node name="sky" type="ParallaxLayer" parent="ParallaxBackground"]
@@ -110,6 +109,9 @@ motion_mirroring = Vector2(1920, 0)
 texture = ExtResource("5_5ph7u")
 centered = false
 
+[node name="CanvasModulate" type="CanvasModulate" parent="ParallaxBackground"]
+color = Color(0.4, 0.45, 0.6, 1)
+
 [node name="player" parent="." instance=ExtResource("6_t48sv")]
 position = Vector2(187, 532)
 
@@ -143,23 +145,20 @@ texture_progress = SubResource("AtlasTexture_vf3rk")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_5ph7u")
 
-[node name="enemy3" parent="." instance=ExtResource("11_naxnx")]
-position = Vector2(1759, 558)
-
 [node name="enemy5" parent="." instance=ExtResource("12_05sef")]
-position = Vector2(1802, 1008)
-
-[node name="enemy6" parent="." instance=ExtResource("12_05sef")]
-position = Vector2(1827, 50)
-
-[node name="enemy4" parent="." instance=ExtResource("13_vf3rk")]
-position = Vector2(1573, 563)
-
-[node name="enemy2" parent="." instance=ExtResource("14_oydge")]
-position = Vector2(1474, 164)
+position = Vector2(1816, 535)
 
 [node name="enemy1" parent="." instance=ExtResource("7_t48sv")]
-position = Vector2(1388, 957)
+position = Vector2(1534, 136)
+
+[node name="enemy2" parent="." instance=ExtResource("13_vf3rk")]
+position = Vector2(1844, 265)
+
+[node name="enemy3" parent="." instance=ExtResource("14_pleq2")]
+position = Vector2(1809, 691)
+
+[node name="enemy4" parent="." instance=ExtResource("14_oydge")]
+position = Vector2(1702, 423)
 
 [connection signal="pressed" from="debugcanvas/respawnbutton" to="debugcanvas" method="_on_respawnbutton_pressed"]
 [connection signal="pressed" from="debugcanvas/damageshieldbutton" to="debugcanvas" method="_on_damageshieldbutton_pressed"]
